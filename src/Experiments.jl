@@ -106,7 +106,7 @@ iterable value becomes a dimension in the resulting array
 
 flatten(d::Dict{K,V}, k::K) where {K,V} = (setindex!(copy(d), n, k) for n in d[k])
 function flatten(d::Dict)
-    (Dict(kv...) for kv in product([ (k=>s for s in v) for (k,v) in params ]...))
+    (Dict(kv...) for kv in product([ (k=>s for s in v) for (k,v) in d ]...))
 end
 
 flatten(ex::Experiment, k::Symbol) = Experiment.(collect(flatten(ex.params, k)), ex.seed)
