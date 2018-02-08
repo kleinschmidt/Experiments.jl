@@ -52,22 +52,22 @@ function Result(ps::ParticleFilter)
 end
 
 import Base.run
-function run(ex::Experiment)
+function run(ex::Experiment, transform=Result; progress=false)
     params = ex.params
 
     prior = NormalInverseChisq(params[:μ_0], params[:σ2_0], params[:κ_0], params[:ν_0])
     ps = ChenLiuParticles(params[:num_particle], prior, params[:α])
 
-    results = Result[]
+    results = []
     srand(ex.seed)
     first = 1
     for k in sort(params[:num_obs])
-        fit!(ps, view(ex.params[:data], first:k), false)
+        fit!(ps, view(ex.params[:data], first:k), progress)
         first = k+1
-        push!(results, Result(ps))
+        push!(results, transform(ps))
     end
     
-    return results
+    return [results...]
 end
 
 function Result(gs::GibbsCRPSamples)
