@@ -1,1 +1,6 @@
+Particles
+StatsBase
+Distributions
+DataFrames
+Underscore
 julia 0.6
