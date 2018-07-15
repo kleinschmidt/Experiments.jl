@@ -1,5 +1,5 @@
 module Experiments
-using Particles, Distributions, DataFrames, Underscore
+using Particles, Distributions, DataFrames, Underscore, StatsBase
 
 export Experiment,
     Result,
@@ -50,6 +50,9 @@ function Result(ps::ParticleFilter)
     K_map = ncomponents(ps[best[2]])
     return Result(K_modal, K_mean, K_map, p_of_K)
 end
+
+# quick and dirty: just get the entropy and the Result struct
+result_entropy(ps::ParticleFilter) = Result(ps), state_entropy(ps)
 
 import Base.run
 function run(ex::Experiment, transform=Result; progress=false)
