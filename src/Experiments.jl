@@ -52,10 +52,25 @@ function Result(ps::ParticleFilter)
 end
 
 # quick and dirty: just get the entropy and the Result struct
-result_entropy(ps::ParticleFilter) = Result(ps), state_entropy(ps)
+result_entropy_assignsim(ps::ParticleFilter) =
+    Result(ps), state_entropy(ps), assignment_similarity(ps)
+
+result_entropy(ps::ParticleFilter) =
+    Result(ps), state_entropy(ps)
+
+function data!(ex::Experiment)
+    if ex.params[:data] isa Function
+        ex.params[:data_f] = ex.params[:data]
+        ex.params[:data] = ex.params[:data_f](ex)
+    end
+end
+
 
 import Base.run
 function run(ex::Experiment, transform=Result; progress=false)
+    println(join(["$k=>$v" for (k,v) in ex.params], ", "))
+    data!(ex)
+    
     params = ex.params
 
     prior = NormalInverseChisq(params[:μ_0], params[:σ2_0], params[:κ_0], params[:ν_0])
